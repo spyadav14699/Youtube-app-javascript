@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    
+</head>
+<style>
+ 
+  .first{
+    height: 50px;
+    background-color: black;
+    display: flex;
+  }
+   #search_result{
+       display: grid;
+       grid-template-columns: repeat(4,25%);
+     gap: 5%;
+     margin: auto;
+     margin-top: 20px;
+     
+   }
+   #search_result>div{
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;;
+   }
+   .logo{
+      margin-left: 2%;
+   }
+   .enput{
+     margin-top: 10px;
+     /* margin-top: %; */
+
+   }
+   #search{
+     height: 20px;
+     width: 200px;
+     border-radius: 12px;
+     margin-bottom:10px;
+   }
+   #btn{
+     /* background-color: black; */
+     color:black;
+     width: 150px;
+     font-size: 16px;
+     border-style: none;
+     border-radius: 12px;
+     margin: auto;
+     padding:3px;
+     justify-content: center;
+    
+
+   }
+
+</style>
+<body>
+  
+   
+   
+    <div class="first">
+        <div class="logo">
+     
+            <img src="https://variety.com/wp-content/uploads/2020/06/youtube-logo.png?w=681&h=383&crop=1" height="40px" width="150px"/>
+        </div>
+
+      <div class="enput">
+        <input type="text" id="search" placeholder="Search">
+        <button onclick="searchvideos()" id="btn">Search</button>
+       
+        </div>
+     
+      </div>
+  
+      <div id="search_result"></div>
+</body>
+</html>
+<script>
+    const search_result=document.getElementById('search_result')
+    const searchvideos =async()=>{
+       
+    try{
+   
+      let inp=document.getElementById('search').value;
+      let res= await fetch(`https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${inp}&key=AIzaSyA4mkH3yW2Hu9FsZi5WdEXIVwcZmi0bBUY&maxResults=20`);
+   let data =await res.json()
+   let videos=data.items;
+   console.log("vidoes:",videos)
+   apeendvideos(videos);
+//    return videos;
+    console.log("data:",data)
+  
+    }
+    catch(error){
+       console.log("error:",error)
+    }
+    };
+  
+  const apeendvideos =  (data) =>{
+    search_result.innerHTML=null;
+       data.forEach( ({snippet:{title,thumbnails},id:{videoId}})=>{
+         let div=document.createElement('div')
+         let name=document.createElement("p")
+        name.innerText=title;
+       let thumbnail=document.createElement("img")
+       thumbnail.src=thumbnails.default.url;
+       thumbnail.addEventListener("click",function(){
+videoplay(data)
+       });
+      // thumbnail.height="100px";
+       thumbnail.style.height="200px";
+       thumbnail.style.width="100%";
+       
+        // let iframe=document.createElement('iframe')
+        //  iframe.src=`https://www.youtube.com/embed/${videoId}`
+        // iframe.height="100%"
+        // iframe.width="100%"
+        // iframe.allow="fullscreen"
+         div.append(thumbnail,name)
+         search_result.append(div)
+         
+         
+       })
+  }
+  function videoplay(el)
+  {
+      search_result.innerHTML=null;
+       let iframe=document.createElement('iframe')
+         iframe.src=`https://www.youtube.com/embed/${el.videoId}`
+        iframe.height="100%"
+        iframe.width="100%"
+        iframe.allow="fullscreen";
+        search_result.append(iframe);
+  }
+  //embed url --- https://www.youtube.com/embed/z8p62IbcDpE 
+</script>
